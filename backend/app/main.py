@@ -1,12 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from .api import galleries, film_stocks, trips
 
 app = FastAPI(
     title="Photography App API",
     description="Film management system API",
-    version="1.0.0"
+    version="1.0.0",
+    root_path_in_servers=False
 )
+
+# Trust proxy headers from Railway
+@app.middleware("http")
+async def add_proxy_headers(request, call_next):
+    # Trust X-Forwarded-Proto from Railway proxy
+    if "x-forwarded-proto" in request.headers:
+        request.scope["scheme"] = request.headers["x-forwarded-proto"]
+    response = await call_next(request)
+    return response
 
 # CORS middleware - must be added before routes
 app.add_middleware(
