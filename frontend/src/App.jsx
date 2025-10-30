@@ -8,7 +8,7 @@ import TripDetail from './pages/TripDetail';
 
 function App() {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename="/photography-app">
             <Layout>
                 <Routes>
                     <Route path="/" element={<Navigate to="/galleries" replace />} />
