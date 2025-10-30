@@ -11,7 +11,7 @@ app = FastAPI(
 # CORS middleware - must be added before routes
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^https://.*\.railway\.app$|^https://.*\.vercel\.app$|^http://localhost:\d+$|^http://127\.0\.0\.1:\d+$",
+    allow_origin_regex=r"^https://.*\.railway\.app$|^https://.*\.vercel\.app$|^https://.*\.github\.io$|^http://localhost:\d+$|^http://127\.0\.0\.1:\d+$",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
