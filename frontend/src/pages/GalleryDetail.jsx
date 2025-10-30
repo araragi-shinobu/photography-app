@@ -275,7 +275,6 @@ export default function GalleryDetail() {
                     </div>
                 </form>
             </Modal>
-            )}
         </div>
     );
 }
