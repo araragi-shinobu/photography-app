@@ -105,9 +105,17 @@ export default function GalleryDetail() {
         }
     };
 
-    const handleSetCover = async (photoId) => {
+    const handleSetCover = async (photo) => {
         try {
-            await galleriesAPI.setCoverPhoto(id, photoId);
+            await galleriesAPI.setCoverPhoto(id, photo.id);
+            setGallery((prev) => {
+                if (!prev) return prev;
+                const coverUrl = photo.original_url || photo.thumbnail_url;
+                return {
+                    ...prev,
+                    cover_image_url: coverUrl,
+                };
+            });
             fetchGallery();
         } catch (error) {
             console.error('Failed to set cover photo:', error);
@@ -190,7 +198,7 @@ export default function GalleryDetail() {
                     {photos.map((photo, index) => {
                         const previewUrl = normalizeImageUrl(photo.thumbnail_url || photo.original_url);
                         const fullUrl = normalizeImageUrl(photo.original_url || photo.thumbnail_url);
-                        const isCover = normalizedCoverImageUrl && normalizedCoverImageUrl === fullUrl;
+                        const isCover = normalizedCoverImageUrl && (normalizedCoverImageUrl === fullUrl || normalizedCoverImageUrl === previewUrl);
                         return (
                             <div
                                 key={photo.id}
@@ -225,7 +233,7 @@ export default function GalleryDetail() {
                                     </div>
                                     {!isCover && (
                                         <button
-                                            onClick={() => handleSetCover(photo.id)}
+                                            onClick={() => handleSetCover(photo)}
                                             className="opacity-0 group-hover:opacity-100 border border-white/40 bg-white/5 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-white transition-all hover:bg-white hover:text-black"
                                         >
                                             Set as Cover
