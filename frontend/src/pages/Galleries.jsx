@@ -43,51 +43,59 @@ export default function Galleries() {
     if (loading) return <Loading />;
 
     return (
-        <div>
-            <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-bold text-gray-900">Galleries</h2>
+        <div className="space-y-12 fade-in">
+            <div className="gradient-panel px-8 py-7 flex flex-wrap items-center justify-between gap-6">
+                <div>
+                    <h2 className="text-2xl font-semibold tracking-[0.35em] uppercase text-gray-100">Galleries</h2>
+                    <p className="mt-2 text-xs uppercase tracking-[0.4em] text-gray-400">Curate your best frames</p>
+                </div>
                 <Button onClick={() => setShowModal(true)}>New Gallery</Button>
             </div>
 
             {galleries.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                    No galleries yet. Create your first gallery to get started.
+                <div className="glass-panel--soft px-10 py-16 text-center text-gray-400 tracking-[0.3em] uppercase">
+                    No galleries yet · Let&apos;s start your archive
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {galleries.map((gallery) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 fade-in-up">
+                    {galleries.map((gallery, index) => (
                         <div
                             key={gallery.id}
                             onClick={() => navigate(`/galleries/${gallery.id}`)}
-                            className="cursor-pointer group"
+                            className={`cursor-pointer group p-5 glass-panel transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_25px_45px_rgba(0,0,0,0.45)] fade-in-up ${index % 3 === 1 ? 'fade-in-delay' : index % 3 === 2 ? 'fade-in-delay-lg' : ''}`}
                         >
-                            <div className="aspect-square bg-gray-100 mb-3 overflow-hidden">
+                            <div className="aspect-square relative overflow-hidden bg-black/40">
                                 {gallery.cover_image_url ? (
                                     <img
                                         src={gallery.cover_image_url}
                                         alt={gallery.name}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 group-hover:rotate-1"
                                     />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                        No photos
+                                    <div className="w-full h-full flex items-center justify-center text-gray-500 tracking-[0.3em] uppercase">
+                                        No Photos
                                     </div>
                                 )}
+                                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                             </div>
-                            <h3 className="font-medium text-gray-900 mb-1">{gallery.name}</h3>
-                            <p className="text-sm text-gray-500">{gallery.photo_count} photos</p>
-                            {gallery.description && (
-                                <p className="text-sm text-gray-600 mt-1 line-clamp-2">{gallery.description}</p>
-                            )}
+                            <div className="mt-4 space-y-2">
+                                <h3 className="text-lg font-medium text-white uppercase tracking-[0.25em]">{gallery.name}</h3>
+                                <p className="text-xs uppercase tracking-[0.35em] text-gray-400">{gallery.photo_count} photos</p>
+                                {gallery.description && (
+                                    <p className="text-sm text-gray-300/90 leading-relaxed line-clamp-2">
+                                        {gallery.description}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </div>
             )}
 
             <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="New Gallery">
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Name *
                         </label>
                         <input
@@ -95,21 +103,21 @@ export default function Galleries() {
                             required
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Description
                         </label>
                         <textarea
                             rows={4}
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="flex gap-3 justify-end">
+                    <div className="flex flex-wrap gap-3 justify-end">
                         <Button variant="secondary" onClick={() => setShowModal(false)}>
                             Cancel
                         </Button>

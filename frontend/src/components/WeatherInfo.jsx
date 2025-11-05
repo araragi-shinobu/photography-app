@@ -29,20 +29,18 @@ export default function WeatherInfo({ tripId, destination }) {
 
     if (!destination) {
         return (
-            <div className="border border-gray-200 p-6 bg-gray-50">
-                <p className="text-gray-500 text-sm">
-                    Add a destination to see weather and photography times
-                </p>
+            <div className="glass-panel--soft px-6 py-5 text-sm text-gray-400">
+                Add a destination to see weather and photography times
             </div>
         );
     }
 
     if (loading) {
         return (
-            <div className="border border-gray-200 p-6">
-                <div className="flex items-center gap-2 text-gray-600">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
-                    <span className="text-sm">Loading weather data...</span>
+            <div className="glass-panel--soft px-6 py-5">
+                <div className="flex items-center gap-2 text-gray-300">
+                    <div className="animate-spin h-4 w-4 border-b-2 border-white"></div>
+                    <span className="text-sm uppercase tracking-[0.35em]">Loading weather data...</span>
                 </div>
             </div>
         );
@@ -50,11 +48,11 @@ export default function WeatherInfo({ tripId, destination }) {
 
     if (error) {
         return (
-            <div className="border border-gray-200 p-6 bg-gray-50">
-                <p className="text-gray-600 text-sm mb-2">{error}</p>
+            <div className="glass-panel--soft px-6 py-5 text-sm text-gray-200">
+                <p className="mb-3 text-gray-300">{error}</p>
                 <button
                     onClick={fetchWeather}
-                    className="text-sm text-gray-900 underline hover:no-underline"
+                    className="uppercase tracking-[0.35em] text-xs text-gray-100 underline hover:text-white"
                 >
                     Try again
                 </button>
@@ -65,21 +63,21 @@ export default function WeatherInfo({ tripId, destination }) {
     if (!weatherData) return null;
 
     return (
-        <div className="border border-gray-200">
+        <div className="glass-panel">
             <button
                 onClick={() => setShowDetails(!showDetails)}
-                className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                className="w-full px-6 py-5 flex items-center justify-between hover:bg-white/10 transition-colors"
             >
                 <div className="text-left">
-                    <h3 className="font-medium text-gray-900 mb-1">
+                    <h3 className="font-medium text-white mb-1 uppercase tracking-[0.3em] text-sm">
                         Weather & Photography Times
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-xs text-gray-300 uppercase tracking-[0.35em]">
                         {weatherData.location.name}, {weatherData.location.country}
                     </p>
                 </div>
                 <svg
-                    className={`w-5 h-5 text-gray-500 transition-transform ${showDetails ? 'rotate-180' : ''}`}
+                    className={`w-5 h-5 text-gray-300 transition-transform ${showDetails ? 'rotate-180' : ''}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -89,29 +87,29 @@ export default function WeatherInfo({ tripId, destination }) {
             </button>
 
             {showDetails && (
-                <div className="border-t border-gray-200 p-6 space-y-6">
+                <div className="border-t border-white/10 px-6 py-6 space-y-6">
                     {/* Weather Section */}
                     {weatherData.weather && (
                         <div>
-                            <h4 className="text-sm font-medium text-gray-900 mb-3">Weather Forecast</h4>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
+                            <h4 className="text-xs uppercase tracking-[0.35em] text-gray-400 mb-4">Weather Forecast</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-200">
                                 <div>
-                                    <span className="text-gray-500">Condition:</span>
-                                    <span className="ml-2 text-gray-900">{weatherData.weather.description}</span>
+                                    <span className="text-gray-400 uppercase tracking-[0.3em] text-xs">Condition</span>
+                                    <div className="mt-1 text-base tracking-normal text-white">{weatherData.weather.description}</div>
                                 </div>
                                 <div>
-                                    <span className="text-gray-500">Temperature:</span>
-                                    <span className="ml-2 text-gray-900">
+                                    <span className="text-gray-400 uppercase tracking-[0.3em] text-xs">Temperature</span>
+                                    <div className="mt-1 text-base tracking-normal text-white">
                                         {Math.round(weatherData.weather.temperature_min)}°C - {Math.round(weatherData.weather.temperature_max)}°C
-                                    </span>
+                                    </div>
                                 </div>
                                 <div>
-                                    <span className="text-gray-500">Rain Probability:</span>
-                                    <span className="ml-2 text-gray-900">{weatherData.weather.precipitation_probability}%</span>
+                                    <span className="text-gray-400 uppercase tracking-[0.3em] text-xs">Rain Probability</span>
+                                    <div className="mt-1 text-base tracking-normal text-white">{weatherData.weather.precipitation_probability}%</div>
                                 </div>
                                 <div>
-                                    <span className="text-gray-500">Date:</span>
-                                    <span className="ml-2 text-gray-900">{weatherData.weather.date}</span>
+                                    <span className="text-gray-400 uppercase tracking-[0.3em] text-xs">Date</span>
+                                    <div className="mt-1 text-base tracking-normal text-white">{weatherData.weather.date}</div>
                                 </div>
                             </div>
                         </div>
@@ -120,23 +118,23 @@ export default function WeatherInfo({ tripId, destination }) {
                     {/* Sun Times Section */}
                     {weatherData.sun_times && (
                         <div>
-                            <h4 className="text-sm font-medium text-gray-900 mb-3">Sun Times</h4>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
+                            <h4 className="text-xs uppercase tracking-[0.35em] text-gray-400 mb-4">Sun Times</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-200">
                                 <div>
-                                    <span className="text-gray-500">Sunrise:</span>
-                                    <span className="ml-2 text-gray-900 font-medium">{weatherData.sun_times.sunrise}</span>
+                                    <span className="text-gray-400 uppercase tracking-[0.3em] text-xs">Sunrise</span>
+                                    <div className="mt-1 text-base tracking-normal text-white font-medium">{weatherData.sun_times.sunrise}</div>
                                 </div>
                                 <div>
-                                    <span className="text-gray-500">Sunset:</span>
-                                    <span className="ml-2 text-gray-900 font-medium">{weatherData.sun_times.sunset}</span>
+                                    <span className="text-gray-400 uppercase tracking-[0.3em] text-xs">Sunset</span>
+                                    <div className="mt-1 text-base tracking-normal text-white font-medium">{weatherData.sun_times.sunset}</div>
                                 </div>
                                 <div>
-                                    <span className="text-gray-500">Solar Noon:</span>
-                                    <span className="ml-2 text-gray-900">{weatherData.sun_times.solar_noon}</span>
+                                    <span className="text-gray-400 uppercase tracking-[0.3em] text-xs">Solar Noon</span>
+                                    <div className="mt-1 text-base tracking-normal text-white">{weatherData.sun_times.solar_noon}</div>
                                 </div>
                                 <div>
-                                    <span className="text-gray-500">Timezone:</span>
-                                    <span className="ml-2 text-gray-900">{weatherData.sun_times.timezone || 'Local'}</span>
+                                    <span className="text-gray-400 uppercase tracking-[0.3em] text-xs">Timezone</span>
+                                    <div className="mt-1 text-base tracking-normal text-white">{weatherData.sun_times.timezone || 'Local'}</div>
                                 </div>
                             </div>
                         </div>
@@ -145,19 +143,19 @@ export default function WeatherInfo({ tripId, destination }) {
                     {/* Golden Hour Section */}
                     {weatherData.sun_times && (
                         <div>
-                            <h4 className="text-sm font-medium text-gray-900 mb-3">
+                            <h4 className="text-xs uppercase tracking-[0.35em] text-amber-200 mb-4">
                                 Golden Hour 🌅
                             </h4>
-                            <div className="space-y-2 text-sm">
-                                <div className="bg-amber-50 border border-amber-200 p-3">
-                                    <div className="text-gray-700 font-medium mb-1">Morning</div>
-                                    <div className="text-gray-900">
+                            <div className="grid gap-3 text-sm">
+                                <div className="border border-amber-300/40 bg-amber-400/10 px-4 py-3 text-amber-100">
+                                    <div className="text-xs uppercase tracking-[0.35em] text-amber-200 mb-2">Morning</div>
+                                    <div className="text-base tracking-normal text-white">
                                         {weatherData.sun_times.golden_hour_morning.start} - {weatherData.sun_times.golden_hour_morning.end}
                                     </div>
                                 </div>
-                                <div className="bg-amber-50 border border-amber-200 p-3">
-                                    <div className="text-gray-700 font-medium mb-1">Evening</div>
-                                    <div className="text-gray-900">
+                                <div className="border border-amber-300/40 bg-amber-400/10 px-4 py-3 text-amber-100">
+                                    <div className="text-xs uppercase tracking-[0.35em] text-amber-200 mb-2">Evening</div>
+                                    <div className="text-base tracking-normal text-white">
                                         {weatherData.sun_times.golden_hour_evening.start} - {weatherData.sun_times.golden_hour_evening.end}
                                     </div>
                                 </div>
@@ -168,19 +166,19 @@ export default function WeatherInfo({ tripId, destination }) {
                     {/* Blue Hour Section */}
                     {weatherData.sun_times && (
                         <div>
-                            <h4 className="text-sm font-medium text-gray-900 mb-3">
+                            <h4 className="text-xs uppercase tracking-[0.35em] text-blue-200 mb-4">
                                 Blue Hour 🌆
                             </h4>
-                            <div className="space-y-2 text-sm">
-                                <div className="bg-blue-50 border border-blue-200 p-3">
-                                    <div className="text-gray-700 font-medium mb-1">Morning</div>
-                                    <div className="text-gray-900">
+                            <div className="grid gap-3 text-sm">
+                                <div className="border border-blue-300/40 bg-blue-400/10 px-4 py-3 text-blue-100">
+                                    <div className="text-xs uppercase tracking-[0.35em] text-blue-200 mb-2">Morning</div>
+                                    <div className="text-base tracking-normal text-white">
                                         {weatherData.sun_times.blue_hour_morning.start} - {weatherData.sun_times.blue_hour_morning.end}
                                     </div>
                                 </div>
-                                <div className="bg-blue-50 border border-blue-200 p-3">
-                                    <div className="text-gray-700 font-medium mb-1">Evening</div>
-                                    <div className="text-gray-900">
+                                <div className="border border-blue-300/40 bg-blue-400/10 px-4 py-3 text-blue-100">
+                                    <div className="text-xs uppercase tracking-[0.35em] text-blue-200 mb-2">Evening</div>
+                                    <div className="text-base tracking-normal text-white">
                                         {weatherData.sun_times.blue_hour_evening.start} - {weatherData.sun_times.blue_hour_evening.end}
                                     </div>
                                 </div>
@@ -188,10 +186,10 @@ export default function WeatherInfo({ tripId, destination }) {
                         </div>
                     )}
 
-                    <div className="pt-4 border-t border-gray-200">
+                    <div className="pt-5 border-t border-white/10 text-right">
                         <button
                             onClick={fetchWeather}
-                            className="text-sm text-gray-600 hover:text-gray-900 underline"
+                            className="text-xs uppercase tracking-[0.35em] text-gray-300 hover:text-white underline"
                         >
                             Refresh data
                         </button>

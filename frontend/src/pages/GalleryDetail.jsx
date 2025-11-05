@@ -17,6 +17,7 @@ export default function GalleryDetail() {
     const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 });
     const [viewingImage, setViewingImage] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showUploadModal, setShowUploadModal] = useState(false);
     const [editFormData, setEditFormData] = useState({ name: '', description: '' });
 
     useEffect(() => {
@@ -60,6 +61,8 @@ export default function GalleryDetail() {
         setUploading(false);
         fetchGallery();
         fetchPhotos();
+        setShowUploadModal(false);
+        setUploadProgress({ current: 0, total: 0 });
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -124,27 +127,40 @@ export default function GalleryDetail() {
         }
     };
 
+    const handleUploadModalClose = () => {
+        if (uploading) return;
+        setShowUploadModal(false);
+        setUploadProgress({ current: 0, total: 0 });
+    };
+
     if (loading) return <Loading />;
     if (!gallery) return <div className="text-center py-12">Gallery not found</div>;
 
     return (
-        <div>
-            <div className="mb-8">
+        <div className="space-y-12 fade-in">
+            <div className="glass-panel px-8 py-7">
                 <button
                     onClick={() => navigate('/galleries')}
-                    className="text-sm text-gray-500 hover:text-gray-900 mb-4"
+                    className="inline-flex items-center text-xs uppercase tracking-[0.35em] text-gray-400 hover:text-white transition-colors"
                 >
                     ← Back to galleries
                 </button>
-                <div className="flex items-start justify-between">
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">{gallery.name}</h2>
+                <div className="mt-6 flex flex-wrap items-start justify-between gap-8">
+                    <div className="space-y-4 max-w-2xl">
+                        <h2 className="text-3xl uppercase tracking-[0.3em] text-white">{gallery.name}</h2>
                         {gallery.description && (
-                            <p className="text-gray-600">{gallery.description}</p>
+                            <p className="text-sm leading-relaxed text-gray-300">
+                                {gallery.description}
+                            </p>
                         )}
-                        <p className="text-sm text-gray-500 mt-2">{gallery.photo_count} photos</p>
+                        <p className="text-xs uppercase tracking-[0.35em] text-gray-400">
+                            {gallery.photo_count} photos in collection
+                        </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-3">
+                        <Button onClick={() => setShowUploadModal(true)}>
+                            Add Photos
+                        </Button>
                         <Button variant="secondary" onClick={handleEdit}>
                             Edit
                         </Button>
@@ -155,67 +171,42 @@ export default function GalleryDetail() {
                 </div>
             </div>
 
-            <div
-                {...getRootProps()}
-                className={`border-2 border-dashed rounded-lg p-12 mb-8 text-center cursor-pointer transition-colors ${isDragActive
-                    ? 'border-gray-900 bg-gray-50'
-                    : 'border-gray-300 hover:border-gray-400'
-                    }`}
-            >
-                <input {...getInputProps()} />
-                {uploading ? (
-                    <div>
-                        <p className="text-gray-900 mb-2">
-                            Uploading {uploadProgress.current} / {uploadProgress.total}
-                        </p>
-                        <div className="w-full bg-gray-200 rounded-full h-2 max-w-xs mx-auto">
-                            <div
-                                className="bg-gray-900 h-2 rounded-full transition-all"
-                                style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
-                            />
-                        </div>
-                    </div>
-                ) : (
-                    <p className="text-gray-600">
-                        {isDragActive
-                            ? 'Drop photos here'
-                            : 'Drag photos here or click to select'}
-                    </p>
-                )}
-            </div>
-
             {photos.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                    No photos yet. Upload some photos to get started.
+                <div className="glass-panel--soft px-10 py-16 text-center text-gray-400 tracking-[0.3em] uppercase">
+                    No photos yet · Use Add Photos to begin the story
                 </div>
             ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {photos.map((photo) => {
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 fade-in-up">
+                    {photos.map((photo, index) => {
                         const isCover = gallery.cover_image_url === (photo.thumbnail_url || photo.original_url);
                         return (
-                            <div key={photo.id} className="group relative aspect-square">
+                            <div
+                                key={photo.id}
+                                className={`group relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_35px_65px_rgba(0,0,0,0.55)] fade-in-up ${index % 4 === 1 ? 'fade-in-delay' : index % 4 === 2 ? 'fade-in-delay-lg' : ''}`}
+                            >
                                 <img
                                     src={photo.thumbnail_url || photo.original_url}
                                     alt=""
-                                    className={`w-full h-full object-cover cursor-pointer ${isCover ? 'ring-4 ring-gray-900' : ''}`}
+                                    className={`h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${isCover ? 'ring-2 ring-white/80' : ''}`}
                                     onClick={() => setViewingImage(photo.original_url)}
                                 />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                 {isCover && (
-                                    <div className="absolute top-2 left-2 bg-gray-900 text-white text-xs px-2 py-1">
+                                    <div className="absolute top-3 left-3 bg-white/15 px-4 py-1 text-[10px] uppercase tracking-[0.35em] text-white backdrop-blur">
                                         Cover
                                     </div>
                                 )}
-                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-opacity flex flex-col items-center justify-center gap-2 p-2">
-                                    <div className="flex gap-2">
+                                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center">
+                                    <div className="flex flex-wrap gap-2 justify-center">
                                         <button
                                             onClick={() => setViewingImage(photo.original_url)}
-                                            className="opacity-0 group-hover:opacity-100 text-white text-xs px-3 py-2 border border-white hover:bg-white hover:text-black transition-colors"
+                                            className="opacity-0 group-hover:opacity-100 border border-white/40 bg-white/5 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-white transition-all hover:bg-white hover:text-black"
                                         >
                                             View
                                         </button>
                                         <button
                                             onClick={() => handleDeletePhoto(photo.id)}
-                                            className="opacity-0 group-hover:opacity-100 text-white text-xs px-3 py-2 border border-white hover:bg-red-500 hover:border-red-500 transition-colors"
+                                            className="opacity-0 group-hover:opacity-100 border border-red-300/70 bg-red-400/10 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-red-200 transition-all hover:bg-red-400 hover:text-black"
                                         >
                                             Delete
                                         </button>
@@ -223,7 +214,7 @@ export default function GalleryDetail() {
                                     {!isCover && (
                                         <button
                                             onClick={() => handleSetCover(photo.id)}
-                                            className="opacity-0 group-hover:opacity-100 text-white text-xs px-3 py-2 border border-white hover:bg-gray-900 hover:border-gray-900 transition-colors"
+                                            className="opacity-0 group-hover:opacity-100 border border-white/40 bg-white/5 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-white transition-all hover:bg-white hover:text-black"
                                         >
                                             Set as Cover
                                         </button>
@@ -235,17 +226,56 @@ export default function GalleryDetail() {
                 </div>
             )}
 
-            {/* Image Viewer */}
-            <ImageViewer
-                imageUrl={viewingImage}
-                onClose={() => setViewingImage(null)}
-            />
+            <ImageViewer imageUrl={viewingImage} onClose={() => setViewingImage(null)} />
 
-            {/* Edit Gallery Modal */}
+            <Modal isOpen={showUploadModal} onClose={handleUploadModalClose} title="Add Photos">
+                <div className="space-y-6">
+                    <p className="text-xs uppercase tracking-[0.35em] text-gray-400">
+                        Drag images into the frame or click to browse
+                    </p>
+                    <div
+                        {...getRootProps()}
+                        className={`relative border border-dashed border-white/15 px-10 py-16 text-center transition-all duration-500 backdrop-blur-xl ${isDragActive ? 'bg-white/15 border-white/40 shadow-[0_30px_60px_rgba(0,0,0,0.45)]' : 'bg-white/5 hover:bg-white/10 hover:border-white/30'} ${uploading ? 'opacity-80 pointer-events-none' : ''}`}
+                    >
+                        <input {...getInputProps()} />
+                        {uploading ? (
+                            <div className="space-y-4">
+                                <p className="text-sm uppercase tracking-[0.35em] text-gray-300">
+                                    Uploading {uploadProgress.current} / {uploadProgress.total}
+                                </p>
+                                <div className="mx-auto h-2 w-full max-w-sm overflow-hidden bg-white/10">
+                                    <div
+                                        className="h-full bg-white/80 transition-all"
+                                        style={{ width: `${(uploadProgress.current / Math.max(uploadProgress.total, 1)) * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="space-y-4">
+                                <div className="text-sm uppercase tracking-[0.35em] text-gray-300">
+                                    {isDragActive ? 'Release to upload your frames' : 'Drop your frames here'}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                    JPEG · PNG · HEIC · Up to 10 files per batch
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                    Tip: Hold Shift or Cmd/Ctrl to multi-select.
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    {!uploading && (
+                        <p className="text-xs text-gray-500 text-center">
+                            Upload window closes automatically after the batch completes.
+                        </p>
+                    )}
+                </div>
+            </Modal>
+
             <Modal isOpen={showEditModal} onClose={() => setShowEditModal(false)} title="Edit Gallery">
-                <form onSubmit={handleUpdateGallery}>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                <form onSubmit={handleUpdateGallery} className="space-y-6">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Name *
                         </label>
                         <input
@@ -253,21 +283,21 @@ export default function GalleryDetail() {
                             required
                             value={editFormData.name}
                             onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Description
                         </label>
                         <textarea
                             rows={4}
                             value={editFormData.description}
                             onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="flex gap-3 justify-end">
+                    <div className="flex flex-wrap gap-3 justify-end">
                         <Button variant="secondary" onClick={() => setShowEditModal(false)}>
                             Cancel
                         </Button>

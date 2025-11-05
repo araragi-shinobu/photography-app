@@ -15,6 +15,7 @@ export default function TripDetail() {
     const [loading, setLoading] = useState(true);
     const [uploading, setUploading] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showUploadModal, setShowUploadModal] = useState(false);
     const [viewingImage, setViewingImage] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
@@ -59,6 +60,7 @@ export default function TripDetail() {
 
         setUploading(false);
         fetchTrip();
+        setShowUploadModal(false);
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -104,38 +106,64 @@ export default function TripDetail() {
         }
     };
 
+    const handleCloseUpload = () => {
+        if (uploading) return;
+        setShowUploadModal(false);
+    };
+
+    const normalizeImageUrl = (url) => {
+        if (!url) return url;
+        if (url.startsWith('http://')) {
+            return `https://${url.slice('http://'.length)}`;
+        }
+        return url;
+    };
+
     if (loading) return <Loading />;
     if (!trip) return <div className="text-center py-12">Trip not found</div>;
 
     return (
-        <div>
-            <div className="mb-8">
+        <div className="space-y-12 fade-in">
+            <div className="glass-panel px-8 py-7">
                 <button
                     onClick={() => navigate('/trips')}
-                    className="text-sm text-gray-500 hover:text-gray-900 mb-4"
+                    className="inline-flex items-center text-xs uppercase tracking-[0.35em] text-gray-400 hover:text-white transition-colors"
                 >
                     ← Back to trips
                 </button>
-                <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">{trip.name}</h2>
-                        {trip.destination && (
-                            <p className="text-gray-600 mb-1">
-                                <span className="text-gray-500">Destination:</span> {trip.destination}
-                            </p>
-                        )}
-                        {trip.start_date && (
-                            <p className="text-gray-600 mb-1">
-                                <span className="text-gray-500">Dates:</span>{' '}
-                                {trip.start_date}
-                                {trip.end_date && ` - ${trip.end_date}`}
-                            </p>
-                        )}
-                        {trip.description && (
-                            <p className="text-gray-600 mt-3">{trip.description}</p>
-                        )}
+                <div className="mt-6 flex flex-wrap items-start justify-between gap-8">
+                    <div className="space-y-4 max-w-2xl">
+                        <h2 className="text-3xl uppercase tracking-[0.3em] text-white">{trip.name}</h2>
+                        <div className="space-y-3 text-sm text-gray-300">
+                            {trip.destination && (
+                                <div>
+                                    <div className="uppercase tracking-[0.3em] text-gray-500">Destination</div>
+                                    <div className="mt-1 text-base tracking-normal text-gray-100">{trip.destination}</div>
+                                </div>
+                            )}
+                            {trip.start_date && (
+                                <div>
+                                    <div className="uppercase tracking-[0.3em] text-gray-500">Dates</div>
+                                    <div className="mt-1 text-base tracking-normal text-gray-100">
+                                        {trip.start_date}
+                                        {trip.end_date && ` – ${trip.end_date}`}
+                                    </div>
+                                </div>
+                            )}
+                            {trip.description && (
+                                <div>
+                                    <div className="uppercase tracking-[0.3em] text-gray-500">Notes</div>
+                                    <p className="mt-1 text-base tracking-normal text-gray-200 leading-relaxed">
+                                        {trip.description}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-3">
+                        <Button onClick={() => setShowUploadModal(true)}>
+                            Add Inspiration
+                        </Button>
                         <Button variant="secondary" onClick={() => setShowEditModal(true)}>
                             Edit
                         </Button>
@@ -146,78 +174,104 @@ export default function TripDetail() {
                 </div>
             </div>
 
-            {/* Weather and Photography Times */}
-            <div className="mb-8">
+            <div className="glass-panel--soft px-8 py-6">
                 <WeatherInfo tripId={id} destination={trip.destination} />
             </div>
 
-            <div className="mb-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Inspiration Images</h3>
-
-                <div
-                    {...getRootProps()}
-                    className={`border-2 border-dashed rounded-lg p-8 mb-6 text-center cursor-pointer transition-colors ${isDragActive
-                        ? 'border-gray-900 bg-gray-50'
-                        : 'border-gray-300 hover:border-gray-400'
-                        }`}
-                >
-                    <input {...getInputProps()} />
-                    <p className="text-gray-600">
-                        {uploading
-                            ? 'Uploading...'
-                            : isDragActive
-                                ? 'Drop images here'
-                                : 'Drag inspiration images here or click to select'}
-                    </p>
+            <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h3 className="text-2xl uppercase tracking-[0.3em] text-white">Inspiration Images</h3>
+                        <p className="mt-1 text-xs uppercase tracking-[0.35em] text-gray-500">Curate visual ideas for the journey</p>
+                    </div>
                 </div>
 
                 {!trip.images || trip.images.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500 border border-gray-200">
-                        No inspiration images yet. Upload some to get started.
+                    <div className="glass-panel--soft px-10 py-16 text-center text-gray-400 tracking-[0.3em] uppercase">
+                        No inspiration images yet · Upload to begin the moodboard
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {trip.images.map((image) => (
-                            <div key={image.id} className="group relative aspect-square">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 fade-in-up">
+                        {trip.images.map((image, index) => {
+                            const previewUrl = normalizeImageUrl(image.thumbnail_url || image.image_url);
+                            const fullUrl = normalizeImageUrl(image.image_url || image.thumbnail_url);
+                            return (
+                            <div
+                                key={image.id}
+                                className={`group relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_35px_65px_rgba(0,0,0,0.55)] fade-in-up ${index % 4 === 1 ? 'fade-in-delay' : index % 4 === 2 ? 'fade-in-delay-lg' : ''}`}
+                            >
                                 <img
-                                    src={image.thumbnail_url || image.image_url}
+                                    src={previewUrl}
                                     alt={image.caption || ''}
-                                    className="w-full h-full object-cover cursor-pointer"
-                                    onClick={() => setViewingImage(image.image_url)}
+                                    className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                    onClick={() => setViewingImage({ src: fullUrl, fallback: previewUrl })}
                                 />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                 {image.caption && (
-                                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2">
+                                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 px-4 py-3 text-xs text-gray-200 backdrop-blur">
                                         {image.caption}
                                     </div>
                                 )}
-                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity flex items-center justify-center gap-2">
+                                <div className="absolute inset-0 flex items-center justify-center gap-3">
                                     <button
-                                        onClick={() => setViewingImage(image.image_url)}
-                                        className="opacity-0 group-hover:opacity-100 text-white text-sm px-4 py-2 border border-white hover:bg-white hover:text-black transition-colors"
+                                        onClick={() => setViewingImage({ src: fullUrl, fallback: previewUrl })}
+                                        className="opacity-0 group-hover:opacity-100 border border-white/40 bg-white/5 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-white transition-all hover:bg-white hover:text-black"
                                     >
                                         View
                                     </button>
                                     <button
                                         onClick={() => handleDeleteImage(image.id)}
-                                        className="opacity-0 group-hover:opacity-100 text-white text-sm px-4 py-2 border border-white hover:bg-red-500 hover:border-red-500 transition-colors"
+                                        className="opacity-0 group-hover:opacity-100 border border-red-300/70 bg-red-400/10 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-red-200 transition-all hover:bg-red-400 hover:text-black"
                                     >
                                         Delete
                                     </button>
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>
+
+            <Modal
+                isOpen={showUploadModal}
+                onClose={handleCloseUpload}
+                title="Add Inspiration"
+            >
+                <div className="space-y-5">
+                    <p className="text-xs uppercase tracking-[0.35em] text-gray-400">
+                        Drag inspiration frames here or use the picker
+                    </p>
+                    <div
+                        {...getRootProps()}
+                        className={`relative border border-dashed border-white/15 px-10 py-16 text-center transition-all duration-500 backdrop-blur-xl ${isDragActive ? 'bg-white/15 border-white/40 shadow-[0_30px_60px_rgba(0,0,0,0.45)]' : 'bg-white/5 hover:bg-white/10 hover:border-white/30'} ${uploading ? 'opacity-60 pointer-events-none' : ''}`}
+                    >
+                        <input {...getInputProps()} />
+                        <p className="text-sm uppercase tracking-[0.35em] text-gray-300">
+                            {uploading
+                                ? 'Uploading inspiration...'
+                                : isDragActive
+                                    ? 'Release to upload your frames'
+                                    : 'Drop frames here or click to select'}
+                        </p>
+                        <p className="mt-2 text-xs text-gray-500">JPEG · PNG · HEIC supported</p>
+                    </div>
+                    {uploading && (
+                        <p className="text-xs text-gray-500 text-center">
+                            Please wait until the current batch finishes.
+                        </p>
+                    )}
+                </div>
+            </Modal>
 
             <Modal
                 isOpen={showEditModal}
                 onClose={() => setShowEditModal(false)}
                 title="Edit Trip"
             >
-                <form onSubmit={handleUpdate}>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                <form onSubmit={handleUpdate} className="space-y-5">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Name *
                         </label>
                         <input
@@ -225,56 +279,56 @@ export default function TripDetail() {
                             required
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Destination
                         </label>
                         <input
                             type="text"
                             value={formData.destination}
                             onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="grid gap-5 md:grid-cols-2">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                                 Start Date
                             </label>
                             <input
                                 type="date"
                                 value={formData.start_date}
                                 onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                                className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                                 End Date
                             </label>
                             <input
                                 type="date"
                                 value={formData.end_date}
                                 onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                                className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                             />
                         </div>
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Description
                         </label>
                         <textarea
                             rows={4}
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="flex gap-3 justify-end">
+                    <div className="flex flex-wrap gap-3 justify-end">
                         <Button variant="secondary" onClick={() => setShowEditModal(false)}>
                             Cancel
                         </Button>
@@ -283,9 +337,8 @@ export default function TripDetail() {
                 </form>
             </Modal>
 
-            {/* Image Viewer */}
             <ImageViewer
-                imageUrl={viewingImage}
+                image={viewingImage}
                 onClose={() => setViewingImage(null)}
             />
         </div>

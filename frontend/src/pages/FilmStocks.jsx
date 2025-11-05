@@ -81,44 +81,51 @@ export default function FilmStocks() {
     if (loading) return <Loading />;
 
     return (
-        <div>
-            <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-bold text-gray-900">Film Stock</h2>
+        <div className="space-y-12 fade-in">
+            <div className="gradient-panel px-8 py-7 flex flex-wrap items-center justify-between gap-6">
+                <div>
+                    <h2 className="text-2xl font-semibold tracking-[0.35em] uppercase text-gray-100">Film Stock</h2>
+                    <p className="mt-2 text-xs uppercase tracking-[0.4em] text-gray-400">Catalogue every roll</p>
+                </div>
                 <Button onClick={handleNewClick}>New Film Stock</Button>
             </div>
 
             {filmStocks.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                    No film stocks yet. Add your first film stock to get started.
+                <div className="glass-panel--soft px-10 py-16 text-center text-gray-400 tracking-[0.3em] uppercase">
+                    No film stocks yet · Add your first roll
                 </div>
             ) : (
-                <div className="space-y-4">
-                    {filmStocks.map((stock) => (
+                <div className="space-y-5 fade-in-up">
+                    {filmStocks.map((stock, index) => (
                         <div
                             key={stock.id}
-                            className="border border-gray-200 p-6 hover:border-gray-400 transition-colors"
+                            className={`glass-panel px-7 py-6 border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_25px_45px_rgba(0,0,0,0.45)] fade-in-up ${index % 2 === 1 ? 'fade-in-delay' : ''}`}
                         >
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <h3 className="font-medium text-gray-900 text-lg mb-2">{stock.model}</h3>
-                                    <div className="grid grid-cols-3 gap-4 text-sm">
+                            <div className="flex flex-wrap items-start justify-between gap-6">
+                                <div className="flex-1 min-w-[220px] space-y-3">
+                                    <h3 className="text-lg font-medium uppercase tracking-[0.3em] text-white">{stock.model}</h3>
+                                    <div className="grid gap-3 text-xs uppercase tracking-[0.35em] text-gray-400 md:grid-cols-3">
                                         <div>
-                                            <span className="text-gray-500">Format:</span>
-                                            <span className="ml-2 text-gray-900">{stock.format || 'N/A'}</span>
+                                            <span>Format</span>
+                                            <div className="mt-1 text-sm normal-case tracking-normal text-gray-100">
+                                                {stock.format || 'N/A'}
+                                            </div>
                                         </div>
                                         <div>
-                                            <span className="text-gray-500">Quantity:</span>
-                                            <span className="ml-2 text-gray-900 font-medium">{stock.quantity}</span>
+                                            <span>Quantity</span>
+                                            <div className="mt-1 text-sm normal-case tracking-normal text-white">
+                                                {stock.quantity}
+                                            </div>
                                         </div>
                                         <div>
-                                            <span className="text-gray-500">Expiry:</span>
-                                            <span className="ml-2 text-gray-900">
+                                            <span>Expiry</span>
+                                            <div className="mt-1 text-sm normal-case tracking-normal text-gray-100">
                                                 {stock.expiry_date || 'N/A'}
-                                            </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex gap-2 ml-4">
+                                <div className="flex flex-wrap gap-3">
                                     <Button variant="secondary" onClick={() => handleEdit(stock)}>
                                         Edit
                                     </Button>
@@ -137,9 +144,9 @@ export default function FilmStocks() {
                 onClose={() => setShowModal(false)}
                 title={editingId ? 'Edit Film Stock' : 'New Film Stock'}
             >
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Model *
                         </label>
                         <input
@@ -148,11 +155,11 @@ export default function FilmStocks() {
                             placeholder="e.g. Kodak Portra 400"
                             value={formData.model}
                             onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Format
                         </label>
                         <input
@@ -160,11 +167,11 @@ export default function FilmStocks() {
                             placeholder="e.g. 35mm, 120"
                             value={formData.format}
                             onChange={(e) => setFormData({ ...formData, format: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Quantity *
                         </label>
                         <input
@@ -172,22 +179,22 @@ export default function FilmStocks() {
                             required
                             min="0"
                             value={formData.quantity}
-                            onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value, 10) || 0 })}
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Expiry Date
                         </label>
                         <input
                             type="date"
                             value={formData.expiry_date}
                             onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="flex gap-3 justify-end">
+                    <div className="flex flex-wrap gap-3 justify-end">
                         <Button variant="secondary" onClick={() => setShowModal(false)}>
                             Cancel
                         </Button>

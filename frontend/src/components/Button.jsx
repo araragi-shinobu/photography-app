@@ -1,10 +1,10 @@
 export default function Button({ children, onClick, variant = 'primary', type = 'button', disabled = false, className = '' }) {
-    const baseClasses = 'px-6 py-2 text-sm uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
+    const baseClasses = 'px-7 py-2.5 text-xs uppercase tracking-[0.35em] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-black/30 backdrop-blur';
 
     const variants = {
-        primary: 'bg-gray-900 text-white hover:bg-gray-800',
-        secondary: 'bg-white text-gray-900 border border-gray-900 hover:bg-gray-50',
-        danger: 'bg-white text-red-600 border border-red-600 hover:bg-red-50',
+        primary: 'bg-white/90 text-gray-900 hover:bg-white hover:text-black',
+        secondary: 'bg-transparent text-gray-200 border border-white/30 hover:bg-white/10',
+        danger: 'bg-transparent text-red-400 border border-red-400/60 hover:bg-red-500/10',
     };
 
     return (

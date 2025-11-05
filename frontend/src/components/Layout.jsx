@@ -8,34 +8,37 @@ export default function Layout({ children }) {
     };
 
     return (
-        <div className="min-h-screen bg-white">
-            <header className="border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-6 py-6">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-6">Film Photography</h1>
-                    <nav className="flex gap-8">
+        <div className="min-h-screen text-gray-100">
+            <header className="sticky top-0 z-40 border-b border-white/10 bg-white/5 backdrop-blur-xl">
+                <div className="max-w-6xl mx-auto px-6 py-8">
+                    <div className="flex items-center justify-between">
+                        <h1 className="text-3xl font-semibold tracking-[0.4em] uppercase text-gray-200">Film Photography</h1>
+                        <span className="hidden md:block text-xs uppercase tracking-[0.5em] text-gray-400">Captured in Grain</span>
+                    </div>
+                    <nav className="mt-6 flex gap-10 text-xs uppercase tracking-[0.35em]">
                         <Link
                             to="/galleries"
-                            className={`text-sm uppercase tracking-wider pb-2 border-b-2 transition-colors ${isActive('/galleries')
-                                    ? 'border-gray-900 text-gray-900'
-                                    : 'border-transparent text-gray-500 hover:text-gray-900'
+                            className={`pb-3 transition-all ${isActive('/galleries')
+                                    ? 'text-white border-b border-white'
+                                    : 'text-gray-500 hover:text-gray-200 border-b border-transparent'
                                 }`}
                         >
                             Galleries
                         </Link>
                         <Link
                             to="/film-stocks"
-                            className={`text-sm uppercase tracking-wider pb-2 border-b-2 transition-colors ${isActive('/film-stocks')
-                                    ? 'border-gray-900 text-gray-900'
-                                    : 'border-transparent text-gray-500 hover:text-gray-900'
+                            className={`pb-3 transition-all ${isActive('/film-stocks')
+                                    ? 'text-white border-b border-white'
+                                    : 'text-gray-500 hover:text-gray-200 border-b border-transparent'
                                 }`}
                         >
                             Film Stock
                         </Link>
                         <Link
                             to="/trips"
-                            className={`text-sm uppercase tracking-wider pb-2 border-b-2 transition-colors ${isActive('/trips')
-                                    ? 'border-gray-900 text-gray-900'
-                                    : 'border-transparent text-gray-500 hover:text-gray-900'
+                            className={`pb-3 transition-all ${isActive('/trips')
+                                    ? 'text-white border-b border-white'
+                                    : 'text-gray-500 hover:text-gray-200 border-b border-transparent'
                                 }`}
                         >
                             Trips
@@ -43,7 +46,7 @@ export default function Layout({ children }) {
                     </nav>
                 </div>
             </header>
-            <main className="max-w-7xl mx-auto px-6 py-8">
+            <main className="max-w-6xl mx-auto px-6 py-10">
                 {children}
             </main>
         </div>

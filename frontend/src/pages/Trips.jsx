@@ -49,56 +49,66 @@ export default function Trips() {
     if (loading) return <Loading />;
 
     return (
-        <div>
-            <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-bold text-gray-900">Trips</h2>
+        <div className="space-y-12 fade-in">
+            <div className="gradient-panel px-8 py-7 flex flex-wrap items-center justify-between gap-6">
+                <div>
+                    <h2 className="text-2xl font-semibold tracking-[0.35em] uppercase text-gray-100">Trips</h2>
+                    <p className="mt-2 text-xs uppercase tracking-[0.4em] text-gray-400">Map the journeys ahead</p>
+                </div>
                 <Button onClick={() => setShowModal(true)}>New Trip</Button>
             </div>
 
             {trips.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                    No trips yet. Create your first trip to get started.
+                <div className="glass-panel--soft px-10 py-16 text-center text-gray-400 tracking-[0.3em] uppercase">
+                    No trips yet · Plan your first adventure
                 </div>
             ) : (
-                <div className="space-y-4">
-                    {trips.map((trip) => (
+                <div className="space-y-5 fade-in-up">
+                    {trips.map((trip, index) => (
                         <div
                             key={trip.id}
                             onClick={() => navigate(`/trips/${trip.id}`)}
-                            className="border border-gray-200 p-6 hover:border-gray-400 transition-colors cursor-pointer"
+                            className={`glass-panel px-7 py-6 border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_25px_45px_rgba(0,0,0,0.45)] fade-in-up cursor-pointer ${index % 2 === 1 ? 'fade-in-delay' : ''}`}
                         >
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <h3 className="font-medium text-gray-900 text-lg mb-2">{trip.name}</h3>
-                                    <div className="space-y-1 text-sm">
+                            <div className="flex flex-wrap items-start justify-between gap-6">
+                                <div className="flex-1 min-w-[240px] space-y-3">
+                                    <h3 className="text-lg font-medium uppercase tracking-[0.3em] text-white">{trip.name}</h3>
+                                    <div className="space-y-2 text-sm text-gray-200">
                                         {trip.destination && (
-                                            <div className="text-gray-600">
-                                                <span className="text-gray-500">Destination:</span> {trip.destination}
+                                            <div className="uppercase tracking-[0.25em] text-gray-400">
+                                                Destination
+                                                <div className="mt-1 text-sm normal-case tracking-normal text-gray-100">
+                                                    {trip.destination}
+                                                </div>
                                             </div>
                                         )}
                                         {trip.start_date && (
-                                            <div className="text-gray-600">
-                                                <span className="text-gray-500">Dates:</span>{' '}
-                                                {trip.start_date}
-                                                {trip.end_date && ` - ${trip.end_date}`}
+                                            <div className="uppercase tracking-[0.25em] text-gray-400">
+                                                Dates
+                                                <div className="mt-1 text-sm normal-case tracking-normal text-gray-100">
+                                                    {trip.start_date}
+                                                    {trip.end_date && ` – ${trip.end_date}`}
+                                                </div>
                                             </div>
                                         )}
                                         {trip.description && (
-                                            <div className="text-gray-600 mt-2 line-clamp-2">{trip.description}</div>
+                                            <div className="text-sm text-gray-300/90 leading-relaxed line-clamp-2">
+                                                {trip.description}
+                                            </div>
                                         )}
                                         {trip.images && trip.images.length > 0 && (
-                                            <div className="text-gray-500 mt-2">
+                                            <div className="text-xs uppercase tracking-[0.35em] text-gray-500">
                                                 {trip.images.length} inspiration image{trip.images.length !== 1 ? 's' : ''}
                                             </div>
                                         )}
                                     </div>
                                 </div>
                                 {trip.images && trip.images.length > 0 && (
-                                    <div className="ml-4 w-20 h-20">
+                                    <div className="min-w-[96px] max-w-[96px] h-24 bg-white/10 flex items-center justify-center overflow-hidden">
                                         <img
                                             src={trip.images[0].thumbnail_url || trip.images[0].image_url}
                                             alt=""
-                                            className="w-full h-full object-cover"
+                                            className="h-full w-full object-cover"
                                         />
                                     </div>
                                 )}
@@ -109,9 +119,9 @@ export default function Trips() {
             )}
 
             <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="New Trip">
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Name *
                         </label>
                         <input
@@ -119,56 +129,56 @@ export default function Trips() {
                             required
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Destination
                         </label>
                         <input
                             type="text"
                             value={formData.destination}
                             onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="grid gap-5 md:grid-cols-2">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                                 Start Date
                             </label>
                             <input
                                 type="date"
                                 value={formData.start_date}
                                 onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                                className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                                 End Date
                             </label>
                             <input
                                 type="date"
                                 value={formData.end_date}
                                 onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                                className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                             />
                         </div>
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <div>
+                        <label className="block text-xs uppercase tracking-[0.35em] text-gray-400 mb-3">
                             Description
                         </label>
                         <textarea
                             rows={4}
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 focus:outline-none focus:border-gray-900"
+                            className="w-full bg-white/5 px-5 py-3 text-sm text-white placeholder:text-gray-500 border border-white/10 focus:outline-none focus:border-white/40 focus:ring-0"
                         />
                     </div>
-                    <div className="flex gap-3 justify-end">
+                    <div className="flex flex-wrap gap-3 justify-end">
                         <Button variant="secondary" onClick={() => setShowModal(false)}>
                             Cancel
                         </Button>
