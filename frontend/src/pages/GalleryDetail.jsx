@@ -72,6 +72,14 @@ export default function GalleryDetail() {
         disabled: uploading,
     });
 
+    const normalizeImageUrl = (url) => {
+        if (!url) return url;
+        if (url.startsWith('http://')) {
+            return `https://${url.slice('http://'.length)}`;
+        }
+        return url;
+    };
+
     const handleDelete = async () => {
         if (!confirm('Delete this gallery and all photos?')) return;
 
@@ -136,6 +144,8 @@ export default function GalleryDetail() {
     if (loading) return <Loading />;
     if (!gallery) return <div className="text-center py-12">Gallery not found</div>;
 
+    const normalizedCoverImageUrl = normalizeImageUrl(gallery.cover_image_url);
+
     return (
         <div className="space-y-12 fade-in">
             <div className="glass-panel px-8 py-7">
@@ -178,17 +188,19 @@ export default function GalleryDetail() {
             ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 fade-in-up">
                     {photos.map((photo, index) => {
-                        const isCover = gallery.cover_image_url === (photo.thumbnail_url || photo.original_url);
+                        const previewUrl = normalizeImageUrl(photo.thumbnail_url || photo.original_url);
+                        const fullUrl = normalizeImageUrl(photo.original_url || photo.thumbnail_url);
+                        const isCover = normalizedCoverImageUrl && normalizedCoverImageUrl === fullUrl;
                         return (
                             <div
                                 key={photo.id}
                                 className={`group relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_35px_65px_rgba(0,0,0,0.55)] fade-in-up ${index % 4 === 1 ? 'fade-in-delay' : index % 4 === 2 ? 'fade-in-delay-lg' : ''}`}
                             >
                                 <img
-                                    src={photo.thumbnail_url || photo.original_url}
+                                    src={previewUrl}
                                     alt=""
                                     className={`h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${isCover ? 'ring-2 ring-white/80' : ''}`}
-                                    onClick={() => setViewingImage(photo.original_url)}
+                                    onClick={() => setViewingImage({ src: fullUrl, fallback: previewUrl })}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                                 {isCover && (
@@ -199,7 +211,7 @@ export default function GalleryDetail() {
                                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center">
                                     <div className="flex flex-wrap gap-2 justify-center">
                                         <button
-                                            onClick={() => setViewingImage(photo.original_url)}
+                                            onClick={() => setViewingImage({ src: fullUrl, fallback: previewUrl })}
                                             className="opacity-0 group-hover:opacity-100 border border-white/40 bg-white/5 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-white transition-all hover:bg-white hover:text-black"
                                         >
                                             View
@@ -226,7 +238,7 @@ export default function GalleryDetail() {
                 </div>
             )}
 
-            <ImageViewer imageUrl={viewingImage} onClose={() => setViewingImage(null)} />
+            <ImageViewer image={viewingImage} onClose={() => setViewingImage(null)} />
 
             <Modal isOpen={showUploadModal} onClose={handleUploadModalClose} title="Add Photos">
                 <div className="space-y-6">
