@@ -202,12 +202,12 @@ export default function GalleryDetail() {
                         return (
                             <div
                                 key={photo.id}
-                                className={`group relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_35px_65px_rgba(0,0,0,0.55)] fade-in-up ${index % 4 === 1 ? 'fade-in-delay' : index % 4 === 2 ? 'fade-in-delay-lg' : ''}`}
+                                className={`group relative aspect-square overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl shadow-lg shadow-black/30 transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_35px_65px_rgba(0,0,0,0.55)] fade-in-up ${isCover ? 'outline outline-2 outline-white/70' : ''} ${index % 4 === 1 ? 'fade-in-delay' : index % 4 === 2 ? 'fade-in-delay-lg' : ''}`}
                             >
                                 <img
                                     src={previewUrl}
                                     alt=""
-                                    className={`h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${isCover ? 'ring-2 ring-white/80' : ''}`}
+                                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                                     onClick={() => setViewingImage({ src: fullUrl, fallback: previewUrl })}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
